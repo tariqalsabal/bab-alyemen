@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مطاعم باب اليمن</title>
+<meta name="description" content="مطاعم باب اليمن — لأشهى المأكولات اليمنية. تابعونا على وسائل التواصل الاجتماعي.">
+<meta name="theme-color" content="#5A2814">
+<meta property="og:title" content="مطاعم باب اليمن">
+<meta property="og:description" content="لأشهى المأكولات اليمنية — تابعونا على وسائل التواصل الاجتماعي">
+<meta property="og:image" content="https://tariqalsabal.github.io/bab-alyemen/assets/logo.png">
+<link rel="icon" href="assets/emblem.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brown:#5A2814; --brown-2:#3E1A0B; --gold:#FDB441; --gold-2:#F29A1F;
+    --cream:#FBF3E6; --cream-2:#F4E6CF; --ink:#3A1E10; --muted:#8A6A55;
+    --ribbon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='40'%3E%3Crect width='48' height='40' fill='%235A2814'/%3E%3Crect y='6' width='48' height='4' fill='%23FDB441'/%3E%3Crect y='30' width='48' height='4' fill='%23FDB441'/%3E%3Cpath d='M12 13l7 7-7 7-7-7z' fill='%23FDB441'/%3E%3Cpath d='M36 13l7 7-7 7-7-7z' fill='%23FBF3E6'/%3E%3Cpath d='M24 17l3 3-3 3-3-3z' fill='%23FDB441'/%3E%3C/svg%3E");
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:'Tajawal',system-ui,sans-serif; color:var(--ink); background:var(--cream);
+    min-height:100vh; line-height:1.5; position:relative;
+  }
+  a{color:inherit;text-decoration:none}
+  svg{display:block}
+  [hidden]{display:none!important}
+
+  /* الخلفية: صورة باب اليمن تتلاشى إلى الكريمي */
+  .hero{
+    position:absolute; inset:0 0 auto 0; height:min(62vh,560px); z-index:0;
+    background:url("assets/gate.jpg") center 78%/cover no-repeat;
+  }
+  .hero::after{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg,rgba(251,243,230,.15) 0%,rgba(251,243,230,.55) 55%,var(--cream) 100%);
+  }
+  .deco{position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:1}
+  .ribbon{position:absolute; width:340px; height:40px; background:var(--ribbon);
+    box-shadow:0 0 0 3px var(--cream), 0 0 0 7px var(--brown)}
+  .ribbon.tl{top:42px; left:-90px; transform:rotate(-35deg)}
+  .ribbon.br{bottom:42px; right:-90px; transform:rotate(-35deg)}
+
+  .wrap{position:relative; z-index:2; max-width:520px; margin:0 auto; padding:28px 16px 150px}
+
+  .brand{
+    margin-top:min(20vh,150px); background:rgba(255,253,249,.92); border-radius:28px;
+    padding:26px 22px 22px; text-align:center;
+    box-shadow:0 18px 50px -20px rgba(90,40,20,.45); border:1px solid rgba(90,40,20,.08);
+    backdrop-filter:blur(6px);
+  }
+  .brand img{width:min(300px,78%); height:auto; margin:0 auto}
+  .brand p{margin-top:12px; font-weight:700; color:var(--muted); font-size:15px}
+
+  .section{margin-top:22px}
+  .h{display:flex; align-items:center; gap:12px; justify-content:center; font-weight:800; color:var(--brown); font-size:17px; margin-bottom:14px}
+  .h span{white-space:nowrap}
+  .h::before,.h::after{content:""; flex:0 1 46px; height:2px; border-radius:2px;
+    background:radial-gradient(circle,var(--brown) 3.5px,transparent 4px) right/9px 9px no-repeat,linear-gradient(var(--brown),var(--brown)) left/calc(100% - 12px) 2px no-repeat;
+    height:9px}
+  .h::after{transform:scaleX(-1)}
+
+  /* أيقونات التواصل */
+  .socials{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+  .soc{
+    position:relative; display:flex; flex-direction:column; align-items:center; gap:8px;
+    background:#fff; border-radius:20px; padding:16px 6px 13px; border:1px solid rgba(90,40,20,.1);
+    transition:transform .18s, box-shadow .18s, border-color .18s;
+  }
+  .soc .ic{width:58px; height:58px; border-radius:50%; background:var(--brown); display:grid; place-items:center;
+    box-shadow:inset 0 0 0 3px var(--brown), inset 0 0 0 5px var(--gold); transition:background .18s}
+  .soc .ic svg{width:26px; height:26px; fill:var(--cream)}
+  .soc b{font-size:14px; color:var(--brown)}
+  .soc:not(.off):hover,.soc:not(.off):focus-visible{transform:translateY(-3px); border-color:var(--gold); box-shadow:0 12px 26px -14px rgba(90,40,20,.6); outline:none}
+  .soc:not(.off):hover .ic{background:var(--gold-2)}
+  .soc.off{opacity:.55; cursor:default}
+  .soc.off::after{content:"قريبًا"; position:absolute; top:8px; left:8px; font-size:10.5px; font-weight:800;
+    background:var(--gold); color:var(--brown); padding:1px 7px; border-radius:20px}
+
+  /* بطاقات الاتصال */
+  .cards{display:grid; gap:12px}
+  .card{background:#fff; border-radius:20px; padding:14px 16px; border:1px solid rgba(90,40,20,.1)}
+  .card h3{display:flex; align-items:center; gap:8px; font-size:15px; color:var(--brown); margin-bottom:10px}
+  .card h3 i{width:30px; height:30px; border-radius:50%; background:var(--gold); display:grid; place-items:center}
+  .card h3 i svg{width:16px; height:16px; fill:var(--brown)}
+  .nums{display:flex; flex-wrap:wrap; gap:8px}
+  .num{flex:1 1 140px; display:flex; align-items:center; justify-content:center; gap:8px; direction:ltr;
+    background:var(--cream); border:1.5px solid var(--cream-2); border-radius:14px; padding:10px; font-weight:800;
+    font-size:17px; color:var(--brown); letter-spacing:.5px; transition:background .15s,border-color .15s}
+  .num svg{width:15px; height:15px; fill:var(--gold-2)}
+  .num:hover{background:#fff; border-color:var(--gold)}
+
+  .actions{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .btn{display:flex; align-items:center; justify-content:center; gap:8px; border:0; cursor:pointer; font:inherit; font-weight:800; font-size:15px;
+    border-radius:16px; padding:13px 10px; background:var(--brown); color:var(--cream); transition:background .15s}
+  .btn svg{width:18px; height:18px; fill:var(--gold)}
+  .btn:hover{background:var(--brown-2)}
+  .btn.alt{background:var(--gold); color:var(--brown)}
+  .btn.alt svg{fill:var(--brown)}
+  .btn.alt:hover{background:var(--gold-2)}
+  .btn.wide{grid-column:1/-1}
+
+  footer{margin-top:28px; text-align:center; color:var(--muted); font-size:13px}
+  footer img{display:block; width:56px; height:auto; margin:0 auto 6px; opacity:.85}
+
+  /* نافذة QR */
+  .modal{position:fixed; inset:0; z-index:10; display:none; place-items:center; padding:16px; background:rgba(40,18,8,.55)}
+  .modal.open{display:grid}
+  .modal .box{background:var(--cream); border-radius:24px; padding:22px; text-align:center; width:min(360px,100%)}
+  .modal canvas{width:100%; height:auto; border-radius:16px; background:#fff}
+  .modal p{margin:12px 0; font-weight:700; color:var(--brown)}
+  .toast{position:fixed; bottom:24px; left:50%; transform:translate(-50%,40px); opacity:0; background:var(--brown); color:var(--cream);
+    padding:10px 18px; border-radius:30px; font-weight:700; z-index:11; transition:.25s}
+  .toast.show{opacity:1; transform:translate(-50%,0)}
+
+  @media (max-width:360px){ .socials{grid-template-columns:repeat(2,1fr)} }
+  @media (min-width:900px){ .ribbon{width:520px} }
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+</style>
+</head>
+<body>
+  <div class="hero" aria-hidden="true"></div>
+  <div class="deco" aria-hidden="true"><div class="ribbon tl"></div><div class="ribbon br"></div></div>
+
+  <main class="wrap">
+    <header class="brand">
+      <img src="assets/logo.png" alt="مطاعم باب اليمن — Bab Al-Yemen Restaurants" width="1400" height="1076">
+      <p id="tagline"></p>
+    </header>
+
+    <section class="section">
+      <div class="h"><span>تابعونا على وسائل التواصل</span></div>
+      <nav class="socials" id="socials"></nav>
+    </section>
+
+    <section class="section">
+      <div class="h"><span>تواصل معنا</span></div>
+      <div class="cards">
+        <div class="card" id="delivery-card"><h3><i data-ic="phone"></i>خدمة التوصيل</h3><div class="nums" id="delivery"></div></div>
+        <div class="card" id="support-card"><h3><i data-ic="phone"></i>للشكاوى والاستفسار</h3><div class="nums" id="support"></div></div>
+      </div>
+    </section>
+
+    <section class="section actions" id="actions">
+      <a class="btn wide" id="loc-btn" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24"></svg>موقعنا على الخريطة</a>
+      <a class="btn wide alt" id="menu-btn" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24"></svg>قائمة الطعام</a>
+      <button class="btn" id="share-btn" type="button"><svg viewBox="0 0 24 24"></svg>مشاركة</button>
+      <button class="btn alt" id="qr-btn" type="button"><svg viewBox="0 0 24 24"></svg>كود QR</button>
+    </section>
+
+    <footer>
+      <img src="assets/emblem.png" alt="" width="688" height="292">
+      © <span id="year"></span> مطاعم باب اليمن
+    </footer>
+  </main>
+
+  <div class="modal" id="qr-modal" role="dialog" aria-modal="true" aria-label="كود QR">
+    <div class="box">
+      <canvas id="qr-canvas" width="720" height="720"></canvas>
+      <p>امسح الكود للوصول إلى صفحتنا</p>
+      <div class="actions">
+        <a class="btn alt" href="qr.html">تصميم للطباعة</a>
+        <button class="btn" type="button" id="qr-close">إغلاق</button>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+<script src="assets/brand.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="assets/qr-draw.js"></script>
+<script>
+(function(){
+  var S = window.SITE, I = window.ICONS;
+  var $ = function(id){ return document.getElementById(id); };
+  var svg = function(name){ return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+I[name]+'"/></svg>'; };
+  var fmt = function(n){ return n.replace(/^967/,''); };
+
+  $('tagline').textContent = S.tagline;
+  $('year').textContent = new Date().getFullYear();
+
+  $('socials').innerHTML = S.socials.map(function(s){
+    var inner = '<span class="ic">'+svg(s.id)+'</span><b>'+s.label+'</b>';
+    return s.url
+      ? '<a class="soc" href="'+s.url+'" target="_blank" rel="noopener" aria-label="'+s.label+'">'+inner+'</a>'
+      : '<span class="soc off" aria-disabled="true">'+inner+'</span>';
+  }).join('');
+
+  function nums(id, list){
+    if (!list || !list.length){ $(id+'-card').hidden = true; return; }
+    $(id).innerHTML = list.map(function(n){
+      return '<a class="num" href="tel:+'+n+'">'+svg('phone')+fmt(n)+'</a>';
+    }).join('');
+  }
+  nums('delivery', S.delivery); nums('support', S.support);
+
+  document.querySelectorAll('[data-ic]').forEach(function(el){ el.innerHTML = svg(el.getAttribute('data-ic')); });
+  [['loc-btn','googlemaps',S.location],['menu-btn','menu',S.menu],['share-btn','share',1],['qr-btn','qr',1]].forEach(function(b){
+    var el = $(b[0]); el.querySelector('svg').innerHTML = '<path d="'+I[b[1]]+'"/>';
+    if (typeof b[2] === 'string' && b[2]){ el.href = b[2]; el.hidden = false; }
+  });
+
+  var pageUrl = S.url || location.href.split('#')[0].replace(/index\.html$/,'');
+  function toast(t){ var e=$('toast'); e.textContent=t; e.classList.add('show'); setTimeout(function(){ e.classList.remove('show'); },1800); }
+
+  $('share-btn').onclick = function(){
+    if (navigator.share) navigator.share({ title:S.name, text:S.tagline, url:pageUrl }).catch(function(){});
+    else if (navigator.clipboard) navigator.clipboard.writeText(pageUrl).then(function(){ toast('تم نسخ الرابط'); });
+  };
+  $('qr-btn').onclick = function(){
+    $('qr-modal').classList.add('open');
+    window.drawBrandQR($('qr-canvas'), pageUrl, { size:720 });
+  };
+  $('qr-close').onclick = function(){ $('qr-modal').classList.remove('open'); };
+  $('qr-modal').onclick = function(e){ if (e.target === this) this.classList.remove('open'); };
+})();
+</script>
+</body>
+</html>
