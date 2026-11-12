@@ -10,12 +10,12 @@ window.SITE = {
   socials: [
     { id: 'whatsapp',  label: 'واتساب',   url: 'https://wa.me/qr/VFGAKGQCAZQCH1' },
     { id: 'snapchat',  label: 'سناب شات', url: 'https://www.snapchat.com/add/tlshybh' },
+    { id: 'facebook',  label: 'فيسبوك',   url: 'https://www.facebook.com/profile.php?id=61594663864525' },
     { id: 'instagram', label: 'إنستقرام', url: 'https://www.instagram.com/towfiq20143' },
     { id: 'telegram',  label: 'تيليجرام', url: 'https://t.me/+967773773801' },
     { id: 'imo',       label: 'إيمو',     url: 'https://imo.onelink.me/1MBm?pid=QR_code&af_dp=imo%3A%2F%2Fprofile.user%2FAAAAAAAAAAAAAAAAAAAAAEvFti-qE80miuXdhoJN1Ytcnd9y3IGw_Dz9jqC5G3u5%2Fscene_qr_code' },
     { id: 'tiktok',    label: 'تيك توك',  url: '' },
     { id: 'x',         label: 'إكس',      url: '' },
-    { id: 'facebook',  label: 'فيسبوك',   url: '' },
   ],
 
   // الأرقام بالصيغة الدولية بلا + (اليمن 967)

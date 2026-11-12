@@ -6,6 +6,7 @@
 <title>مطاعم باب اليمن</title>
 <meta name="description" content="مطاعم باب اليمن — لأشهى المأكولات اليمنية. تابعونا على وسائل التواصل الاجتماعي.">
 <meta name="theme-color" content="#5A2814">
+<meta name="format-detection" content="telephone=no">
 <meta property="og:title" content="مطاعم باب اليمن">
 <meta property="og:description" content="لأشهى المأكولات اليمنية — تابعونا على وسائل التواصل الاجتماعي">
 <meta property="og:image" content="https://bab-alyemen.vercel.app/assets/logo.png">
@@ -29,31 +30,40 @@
   svg{display:block}
   [hidden]{display:none!important}
 
-  /* الخلفية: صورة باب اليمن تتلاشى إلى الكريمي */
+  body{-webkit-tap-highlight-color:transparent; overflow-x:clip}
+
+  /* الغلاف: صورة باب اليمن في رأس الصفحة بحافة سفلية من نقش الشعار */
   .hero{
-    position:absolute; inset:0 0 auto 0; height:min(62vh,560px); z-index:0;
-    background:url("assets/gate.jpg") center 78%/cover no-repeat;
+    position:relative; height:clamp(220px, 34vh, 340px); max-width:760px; margin:0 auto;
+    /* الصورة طولية وفي ركنها السفلي شريط زخرفة: تكبير خفيف يُظهر البوابة ويُخفي الشريط */
+    background:url("assets/gate.jpg") 50% 74%/125% auto no-repeat;
+    border-radius:0 0 34px 34px; overflow:hidden;
   }
   .hero::after{
     content:""; position:absolute; inset:0;
-    background:linear-gradient(180deg,rgba(251,243,230,.15) 0%,rgba(251,243,230,.55) 55%,var(--cream) 100%);
+    background:linear-gradient(180deg,rgba(90,40,20,0) 45%,rgba(90,40,20,.35) 100%);
   }
-  .deco{position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:1}
-  .ribbon{position:absolute; width:340px; height:40px; background:var(--ribbon);
+  .hero::before{ /* شريط النقش أسفل الصورة */
+    content:""; position:absolute; inset:auto 0 0 0; height:16px; z-index:1; background:var(--ribbon) center/auto 16px;
+  }
+  .deco{position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; display:none}
+  .ribbon{position:absolute; width:520px; height:40px; background:var(--ribbon);
     box-shadow:0 0 0 3px var(--cream), 0 0 0 7px var(--brown)}
-  .ribbon.tl{top:42px; left:-90px; transform:rotate(-35deg)}
-  .ribbon.br{bottom:42px; right:-90px; transform:rotate(-35deg)}
+  .ribbon.tl{top:60px; left:-120px; transform:rotate(-35deg)}
+  .ribbon.br{bottom:60px; right:-120px; transform:rotate(-35deg)}
+  @media (min-width:900px){ .deco{display:block} }
+  @media (min-width:600px){ .hero{background-size:cover; background-position:50% 67%} }
 
-  .wrap{position:relative; z-index:2; max-width:520px; margin:0 auto; padding:28px 16px 150px}
+  .wrap{position:relative; z-index:2; max-width:480px; margin:0 auto;
+    padding:0 16px calc(36px + env(safe-area-inset-bottom))}
 
   .brand{
-    margin-top:min(20vh,150px); background:rgba(255,253,249,.92); border-radius:28px;
-    padding:26px 22px 22px; text-align:center;
-    box-shadow:0 18px 50px -20px rgba(90,40,20,.45); border:1px solid rgba(90,40,20,.08);
-    backdrop-filter:blur(6px);
+    margin-top:-64px; background:#FFFDF9; border-radius:26px;
+    padding:18px 18px 16px; text-align:center;
+    box-shadow:0 18px 44px -22px rgba(90,40,20,.55); border:1px solid rgba(90,40,20,.08);
   }
-  .brand img{width:min(300px,78%); height:auto; margin:0 auto}
-  .brand p{margin-top:12px; font-weight:700; color:var(--muted); font-size:15px}
+  .brand img{width:min(250px,72%); height:auto; margin:0 auto}
+  .brand p{margin-top:8px; font-weight:700; color:var(--muted); font-size:15px}
 
   .section{margin-top:22px}
   .h{display:flex; align-items:center; gap:12px; justify-content:center; font-weight:800; color:var(--brown); font-size:17px; margin-bottom:14px}
@@ -64,10 +74,10 @@
   .h::after{transform:scaleX(-1)}
 
   /* أيقونات التواصل */
-  .socials{display:flex; flex-wrap:wrap; justify-content:center; gap:12px}
-  .soc{flex:0 0 calc((100% - 24px)/3);
+  .socials{display:flex; flex-wrap:wrap; justify-content:center; gap:10px}
+  .soc{flex:0 0 calc((100% - 20px)/3); min-width:0;
     position:relative; display:flex; flex-direction:column; align-items:center; gap:8px;
-    background:#fff; border-radius:20px; padding:16px 6px 13px; border:1px solid rgba(90,40,20,.1);
+    background:#fff; border-radius:20px; padding:14px 4px 12px; border:1px solid rgba(90,40,20,.1);
     transition:transform .18s, box-shadow .18s, border-color .18s;
   }
   .soc .ic{width:58px; height:58px; border-radius:50%; background:var(--brown); display:grid; place-items:center;
@@ -83,8 +93,9 @@
   .card h3{display:flex; align-items:center; gap:8px; font-size:15px; color:var(--brown); margin-bottom:10px}
   .card h3 i{width:30px; height:30px; border-radius:50%; background:var(--gold); display:grid; place-items:center}
   .card h3 i svg{width:16px; height:16px; fill:var(--brown)}
-  .nums{display:flex; flex-wrap:wrap; gap:8px}
-  .num{flex:1 1 140px; display:flex; align-items:center; justify-content:center; gap:8px; direction:ltr;
+  .nums{display:grid; grid-template-columns:1fr; gap:8px}
+  @media (min-width:520px){ #delivery{grid-template-columns:repeat(3,1fr)} }
+  .num{display:flex; align-items:center; justify-content:center; gap:8px; direction:ltr; min-height:48px;
     background:var(--cream); border:1.5px solid var(--cream-2); border-radius:14px; padding:10px; font-weight:800;
     font-size:17px; color:var(--brown); letter-spacing:.5px; transition:background .15s,border-color .15s}
   .num svg{width:15px; height:15px; fill:var(--gold-2)}
@@ -113,8 +124,8 @@
     padding:10px 18px; border-radius:30px; font-weight:700; z-index:11; transition:.25s}
   .toast.show{opacity:1; transform:translate(-50%,0)}
 
-  @media (max-width:360px){ .soc{flex-basis:calc((100% - 12px)/2)} }
-  @media (min-width:900px){ .ribbon{width:520px} }
+  @media (max-width:330px){ .soc .ic{width:50px; height:50px} .soc b{font-size:13px} }
+  @media (hover:none){ .soc:hover{transform:none; box-shadow:none} .soc:active{transform:scale(.97)} }
   @media (prefers-reduced-motion:reduce){ *{transition:none!important} }
 </style>
 </head>
