@@ -2,7 +2,7 @@
 
 window.SITE = {
   // الرابط النهائي للموقع بعد الاستضافة — يُستعمل في كود QR (اتركه فارغًا ليُؤخذ من عنوان الصفحة)
-  url: 'https://tariqalsabal.github.io/bab-alyemen/',
+  url: 'https://bab-alyemen.vercel.app/',
   name: 'مطاعم باب اليمن',
   tagline: 'لأشهى المأكولات اليمنية',
 
