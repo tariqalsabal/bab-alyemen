@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تصاميم المطبوعات — مطاعم باب اليمن</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/emblem.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700;800&family=Reem+Kufi:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{ --brown:#5A2814; --brown-2:#3E1A0B; --gold:#FDB441; --gold-2:#F29A1F; --cream:#FBF3E6; --cream-2:#F4E6CF; --muted:#8A6A55 }
+  *{box-sizing:border-box;margin:0;padding:0}
+  [hidden]{display:none!important}
+  body{font-family:'Tajawal',system-ui,sans-serif; background:var(--cream); color:var(--brown); min-height:100vh}
+  header{max-width:1200px; margin:0 auto; padding:24px 16px 8px; display:flex; align-items:center; gap:16px; flex-wrap:wrap}
+  header img{width:120px}
+  header h1{font-family:'Reem Kufi','Tajawal',sans-serif; font-size:30px}
+  header p{color:var(--muted); font-size:14.5px; margin-top:4px; line-height:1.6}
+  header nav{margin-inline-start:auto; display:flex; gap:8px; flex-wrap:wrap}
+  header nav a{font-weight:800; font-size:14px; text-decoration:none; color:var(--brown); background:#fff; border:1.5px solid var(--cream-2); padding:9px 14px; border-radius:12px}
+  .grid{max-width:1200px; margin:0 auto; padding:16px 16px 40px; display:grid; gap:18px; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr))}
+  .card{background:#fff; border-radius:20px; border:1px solid rgba(90,40,20,.1); overflow:hidden; display:flex; flex-direction:column}
+  .thumb{background:repeating-conic-gradient(#efe3cf 0 25%, #f7eedf 0 50%) 0 0/20px 20px; aspect-ratio:1; display:grid; place-items:center; padding:14px; cursor:zoom-in}
+  .thumb canvas{max-width:100%; max-height:100%; width:auto; height:auto; border-radius:6px; box-shadow:0 12px 30px -16px rgba(60,25,10,.6)}
+  .meta{padding:12px 14px 14px; display:flex; flex-direction:column; gap:4px; flex:1}
+  .meta b{font-size:16px} .meta small{color:var(--muted); font-size:13px}
+  .num{display:inline-grid; place-items:center; width:24px; height:24px; border-radius:50%; background:var(--gold); font-size:13px; font-weight:800; margin-inline-end:6px}
+  .btn{margin-top:auto; display:flex; align-items:center; justify-content:center; border:0; cursor:pointer; font:inherit; font-weight:800; font-size:14px; border-radius:12px; padding:11px; background:var(--brown); color:var(--cream)}
+  .btn:hover{background:var(--brown-2)}
+  .meta .btn{margin-top:10px}
+  .zoom{position:fixed; inset:0; background:rgba(30,12,5,.82); display:grid; place-items:center; padding:16px; z-index:10}
+  .zoom canvas{max-width:100%; max-height:calc(100vh - 110px); width:auto; height:auto; border-radius:8px}
+  .zoom .bar{display:flex; gap:8px; margin-top:12px; justify-content:center}
+  .zoom .bar .btn{padding:11px 18px}
+  .zoom .alt{background:var(--gold); color:var(--brown)}
+  .note{max-width:1200px; margin:0 auto; padding:0 16px 30px; color:var(--muted); font-size:13.5px; line-height:1.8}
+</style>
+</head>
+<body>
+<header>
+  <img src="assets/logo.png" alt="مطاعم باب اليمن">
+  <div>
+    <h1>تصاميم المطبوعات</h1>
+    <p>عشرة تصاميم جاهزة للطباعة، وكلها تحمل كود QR يفتح صفحة المطعم مع أيقونات حساباته.</p>
+  </div>
+  <nav><a href="qr.html">مصمّم الكود</a><a href="./">الصفحة الرئيسية</a></nav>
+</header>
+
+<main class="grid" id="grid"></main>
+<p class="note">اضغط أي تصميم لتكبيره. الروابط والأرقام وأصناف المنيو تُؤخذ من ملف الإعداد، فأي تعديل فيه يظهر في كل التصاميم.</p>
+
+<div class="zoom" id="zoom" hidden>
+  <div><canvas id="big"></canvas>
+    <div class="bar"><button class="btn alt" id="zdl" type="button">تحميل PNG</button><button class="btn" id="zclose" type="button">إغلاق</button></div>
+  </div>
+</div>
+
+<script src="assets/brand.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="assets/qr-draw.js"></script>
+<script src="assets/designs.js"></script>
+<script>
+(function(){
+  var B = window.BAB_DESIGNS, grid = document.getElementById('grid'), zoom = document.getElementById('zoom'), big = document.getElementById('big'), cur = null;
+  function download(c, name){
+    c.toBlob(function(b){
+      var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+    }, 'image/png');
+  }
+  function file(d){ return 'bab-alyemen-' + d.id + '.png'; }
+
+  // تُرسم التصاميم بالتتابع حتى لا تتزاحم على المتصفّح
+  B.list.reduce(function(p, d, i){
+    var card = document.createElement('article'); card.className = 'card'; card.id = d.id;
+    card.innerHTML = '<div class="thumb" role="button" tabindex="0" aria-label="تكبير"><canvas></canvas></div>' +
+      '<div class="meta"><b><span class="num">' + (i + 1) + '</span></b><small></small><button class="btn" type="button">تحميل PNG</button></div>';
+    card.querySelector('b').appendChild(document.createTextNode(d.title));
+    card.querySelector('small').textContent = d.size;
+    grid.appendChild(card);
+    var c = card.querySelector('canvas');
+    card.querySelector('.btn').onclick = function(){ download(c, file(d)); };
+    var open = function(){ cur = d; big.width = c.width; big.height = c.height; big.getContext('2d').drawImage(c, 0, 0); zoom.hidden = false; };
+    card.querySelector('.thumb').onclick = open;
+    card.querySelector('.thumb').onkeydown = function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); } };
+    return p.then(function(){ return B.render(d, c); });
+  }, Promise.resolve()).then(function(){ document.body.setAttribute('data-ready', '1'); });
+
+  document.getElementById('zdl').onclick = function(){ if (cur) download(big, file(cur)); };
+  document.getElementById('zclose').onclick = function(){ zoom.hidden = true; };
+  zoom.onclick = function(e){ if (e.target === zoom) zoom.hidden = true; };
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') zoom.hidden = true; });
+})();
+</script>
+</body>
+</html>
