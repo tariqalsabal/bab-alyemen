@@ -2,10 +2,17 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>تصاميم المطبوعات — مطاعم باب اليمن</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="assets/emblem.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="باب اليمن">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="color-scheme" content="light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700;800&family=Reem+Kufi:wght@700&display=swap" rel="stylesheet">
@@ -35,6 +42,20 @@
   .zoom .bar{display:flex; gap:8px; margin-top:12px; justify-content:center}
   .zoom .bar .btn{padding:11px 18px}
   .zoom .alt{background:var(--gold); color:var(--brown)}
+  body{-webkit-tap-highlight-color:transparent}
+  .zoom{padding:max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom))}
+  .zoom canvas{max-height:calc(100svh - 120px)}
+  .zoom > div{width:100%; max-width:900px; display:flex; flex-direction:column; align-items:center; min-height:0}
+  .zoom canvas{display:block; max-width:100%; object-fit:contain}
+  @media (max-width:600px){
+    header{padding:max(16px, env(safe-area-inset-top)) 16px 4px; gap:10px}
+    header img{width:78px} header h1{font-size:23px} header p{font-size:13.5px}
+    header nav{width:100%; margin:0} header nav a{flex:1; text-align:center}
+    .grid{grid-template-columns:1fr 1fr; gap:10px; padding:12px 12px calc(24px + env(safe-area-inset-bottom))}
+    .card{border-radius:16px} .thumb{padding:8px} .meta{padding:9px 10px 10px} .meta b{font-size:13.5px} .meta small{font-size:12px}
+    .num{width:20px; height:20px; font-size:11.5px} .meta .btn{padding:9px; font-size:13px; margin-top:8px}
+  }
+  @media (hover:none){ .btn:hover{background:var(--brown)} }
   .note{max-width:1200px; margin:0 auto; padding:0 16px 30px; color:var(--muted); font-size:13.5px; line-height:1.8}
 </style>
 </head>
@@ -53,7 +74,7 @@
 
 <div class="zoom" id="zoom" hidden>
   <div><canvas id="big"></canvas>
-    <div class="bar"><button class="btn alt" id="zdl" type="button">تحميل PNG</button><button class="btn" id="zclose" type="button">إغلاق</button></div>
+    <div class="bar"><button class="btn alt" id="zdl" type="button">حفظ الصورة</button><button class="btn" id="zclose" type="button">إغلاق</button></div>
   </div>
 </div>
 
@@ -61,22 +82,18 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="assets/qr-draw.js"></script>
 <script src="assets/designs.js"></script>
+<script src="assets/save.js"></script>
 <script>
 (function(){
   var B = window.BAB_DESIGNS, grid = document.getElementById('grid'), zoom = document.getElementById('zoom'), big = document.getElementById('big'), cur = null;
-  function download(c, name){
-    c.toBlob(function(b){
-      var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; a.click();
-      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
-    }, 'image/png');
-  }
+  function download(c, name){ return window.saveCanvas(c, name); }
   function file(d){ return 'bab-alyemen-' + d.id + '.png'; }
 
   // تُرسم التصاميم بالتتابع حتى لا تتزاحم على المتصفّح
   B.list.reduce(function(p, d, i){
     var card = document.createElement('article'); card.className = 'card'; card.id = d.id;
     card.innerHTML = '<div class="thumb" role="button" tabindex="0" aria-label="تكبير"><canvas></canvas></div>' +
-      '<div class="meta"><b><span class="num">' + (i + 1) + '</span></b><small></small><button class="btn" type="button">تحميل PNG</button></div>';
+      '<div class="meta"><b><span class="num">' + (i + 1) + '</span></b><small></small><button class="btn" type="button">حفظ الصورة</button></div>';
     card.querySelector('b').appendChild(document.createTextNode(d.title));
     card.querySelector('small').textContent = d.size;
     grid.appendChild(card);

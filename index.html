@@ -11,6 +11,16 @@
 <meta property="og:description" content="لأشهى المأكولات اليمنية — تابعونا على وسائل التواصل الاجتماعي">
 <meta property="og:image" content="https://bab-alyemen.vercel.app/assets/logo.png">
 <link rel="icon" href="assets/emblem.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="باب اليمن">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="color-scheme" content="light">
+<meta property="og:url" content="https://bab-alyemen.vercel.app/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
@@ -30,11 +40,12 @@
   svg{display:block}
   [hidden]{display:none!important}
 
-  body{-webkit-tap-highlight-color:transparent; overflow-x:clip}
+  body{-webkit-tap-highlight-color:transparent; overflow-x:clip; -webkit-font-smoothing:antialiased}
+  .btn:active,.num:active{transform:scale(.98)}
 
   /* الغلاف: صورة باب اليمن في رأس الصفحة بحافة سفلية من نقش الشعار */
   .hero{
-    position:relative; height:clamp(220px, 34vh, 340px); max-width:760px; margin:0 auto;
+    position:relative; height:clamp(220px, 34vh, 340px); height:clamp(220px, 34svh, 340px); max-width:760px; margin:0 auto;
     /* الصورة طولية وفي ركنها السفلي شريط زخرفة: تكبير خفيف يُظهر البوابة ويُخفي الشريط */
     background:url("assets/gate.jpg") 50% 74%/125% auto no-repeat;
     border-radius:0 0 34px 34px; overflow:hidden;
@@ -55,7 +66,7 @@
   @media (min-width:600px){ .hero{background-size:cover; background-position:50% 67%} }
 
   .wrap{position:relative; z-index:2; max-width:480px; margin:0 auto;
-    padding:0 16px calc(36px + env(safe-area-inset-bottom))}
+    padding:0 max(16px, env(safe-area-inset-right)) calc(36px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left))}
 
   .brand{
     margin-top:-64px; background:#FFFDF9; border-radius:26px;
@@ -126,6 +137,8 @@
 
   @media (max-width:330px){ .soc .ic{width:50px; height:50px} .soc b{font-size:13px} }
   @media (hover:none){ .soc:hover{transform:none; box-shadow:none} .soc:active{transform:scale(.97)} }
+  .modal{padding-bottom:max(16px, env(safe-area-inset-bottom))}
+  .toast{bottom:calc(24px + env(safe-area-inset-bottom))}
   @media (prefers-reduced-motion:reduce){ *{transition:none!important} }
 </style>
 </head>

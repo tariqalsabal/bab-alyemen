@@ -2,10 +2,17 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>كود QR — مطاعم باب اليمن</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="assets/emblem.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="باب اليمن">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="color-scheme" content="light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
@@ -18,7 +25,7 @@
   .panel img{width:150px; display:block; margin:0 auto 14px}
   h1{font-size:18px; text-align:center; margin-bottom:16px}
   label{display:block; font-weight:800; font-size:14px; margin:14px 0 6px}
-  input{width:100%; direction:ltr; font:inherit; font-size:14px; padding:11px 12px; border-radius:12px; border:1.5px solid var(--cream-2); background:var(--cream); color:var(--brown)}
+  input{width:100%; direction:ltr; font:inherit; font-size:16px; padding:11px 12px; border-radius:12px; border:1.5px solid var(--cream-2); background:var(--cream); color:var(--brown)}
   input:focus{outline:none; border-color:var(--gold)}
   .hint{font-size:12.5px; color:var(--muted); margin-top:6px; line-height:1.6}
   .seg{display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px}
@@ -31,7 +38,14 @@
   .back{display:block; text-align:center; margin-top:14px; font-weight:700; color:var(--muted); text-decoration:none; font-size:14px}
   .stage{display:grid; place-items:center; background:repeating-conic-gradient(#efe3cf 0 25%, #f7eedf 0 50%) 0 0/24px 24px; border-radius:22px; padding:22px; min-height:400px}
   .stage canvas{max-width:100%; max-height:82vh; height:auto; width:auto; border-radius:10px; box-shadow:0 20px 50px -24px rgba(60,25,10,.6)}
-  @media (max-width:820px){ .wrap{grid-template-columns:1fr} .panel{position:static} }
+  body{-webkit-tap-highlight-color:transparent}
+  @media (max-width:820px){
+    .wrap{grid-template-columns:1fr; gap:14px; padding:max(14px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left))}
+    .panel{position:static; padding:16px}
+    .panel img{display:none}
+    .stage{order:-1; min-height:0; padding:14px; border-radius:20px}
+    .stage canvas{max-height:58vh; max-height:58svh}
+  }
 </style>
 </head>
 <body>
@@ -42,7 +56,7 @@
 
     <label for="url">رابط صفحة المطعم</label>
     <input id="url" type="url" spellcheck="false" placeholder="https://">
-    <div class="hint">هذا الرابط الذي سينتقل إليه من يمسح الكود. ضع رابط الموقع بعد رفعه للاستضافة.</div>
+    <div class="hint">هذا الرابط الذي ينتقل إليه من يمسح الكود.</div>
 
     <label>المقاس</label>
     <div class="seg" id="fmt">
@@ -51,8 +65,8 @@
       <button type="button" data-f="table">ملصق طاولة</button>
     </div>
 
-    <button class="btn alt" id="dl-design" type="button">تحميل التصميم PNG</button>
-    <button class="btn" id="dl-qr" type="button">تحميل الكود وحده PNG</button>
+    <button class="btn alt" id="dl-design" type="button">حفظ التصميم</button>
+    <button class="btn" id="dl-qr" type="button">حفظ الكود وحده</button>
     <a class="btn alt" href="designs.html" style="text-decoration:none">تصاميم المطبوعات العشرة (منيو · طاولة · كروت…)</a>
     <a class="back" href="./">العودة إلى الصفحة الرئيسية ←</a>
   </aside>
@@ -63,6 +77,7 @@
 <script src="assets/brand.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="assets/qr-draw.js"></script>
+<script src="assets/save.js"></script>
 <script>
 (function(){
   var S = window.SITE, I = window.ICONS;
@@ -157,12 +172,7 @@
     });
   }
 
-  function download(c, name){
-    c.toBlob(function(b){
-      var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; a.click();
-      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
-    }, 'image/png');
-  }
+  function download(c, name){ return window.saveCanvas(c, name); }
 
   var t; input.addEventListener('input', function(){ clearTimeout(t); t = setTimeout(render, 250); });
   document.querySelectorAll('#fmt button').forEach(function(b){
