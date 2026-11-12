@@ -64,8 +64,8 @@
   .h::after{transform:scaleX(-1)}
 
   /* أيقونات التواصل */
-  .socials{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
-  .soc{
+  .socials{display:flex; flex-wrap:wrap; justify-content:center; gap:12px}
+  .soc{flex:0 0 calc((100% - 24px)/3);
     position:relative; display:flex; flex-direction:column; align-items:center; gap:8px;
     background:#fff; border-radius:20px; padding:16px 6px 13px; border:1px solid rgba(90,40,20,.1);
     transition:transform .18s, box-shadow .18s, border-color .18s;
@@ -74,11 +74,8 @@
     box-shadow:inset 0 0 0 3px var(--brown), inset 0 0 0 5px var(--gold); transition:background .18s}
   .soc .ic svg{width:26px; height:26px; fill:var(--cream)}
   .soc b{font-size:14px; color:var(--brown)}
-  .soc:not(.off):hover,.soc:not(.off):focus-visible{transform:translateY(-3px); border-color:var(--gold); box-shadow:0 12px 26px -14px rgba(90,40,20,.6); outline:none}
-  .soc:not(.off):hover .ic{background:var(--gold-2)}
-  .soc.off{opacity:.55; cursor:default}
-  .soc.off::after{content:"قريبًا"; position:absolute; top:8px; left:8px; font-size:10.5px; font-weight:800;
-    background:var(--gold); color:var(--brown); padding:1px 7px; border-radius:20px}
+  .soc:hover,.soc:focus-visible{transform:translateY(-3px); border-color:var(--gold); box-shadow:0 12px 26px -14px rgba(90,40,20,.6); outline:none}
+  .soc:hover .ic{background:var(--gold-2)}
 
   /* بطاقات الاتصال */
   .cards{display:grid; gap:12px}
@@ -116,7 +113,7 @@
     padding:10px 18px; border-radius:30px; font-weight:700; z-index:11; transition:.25s}
   .toast.show{opacity:1; transform:translate(-50%,0)}
 
-  @media (max-width:360px){ .socials{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:360px){ .soc{flex-basis:calc((100% - 12px)/2)} }
   @media (min-width:900px){ .ribbon{width:520px} }
   @media (prefers-reduced-motion:reduce){ *{transition:none!important} }
 </style>
@@ -176,17 +173,15 @@
 (function(){
   var S = window.SITE, I = window.ICONS;
   var $ = function(id){ return document.getElementById(id); };
-  var svg = function(name){ return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+I[name]+'"/></svg>'; };
+  var svg = function(name){ return '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="'+(name === 'imo' ? 'evenodd' : 'nonzero')+'" d="'+I[name]+'"/></svg>'; };
   var fmt = function(n){ return n.replace(/^967/,''); };
 
   $('tagline').textContent = S.tagline;
   $('year').textContent = new Date().getFullYear();
 
-  $('socials').innerHTML = S.socials.map(function(s){
-    var inner = '<span class="ic">'+svg(s.id)+'</span><b>'+s.label+'</b>';
-    return s.url
-      ? '<a class="soc" href="'+s.url+'" target="_blank" rel="noopener" aria-label="'+s.label+'">'+inner+'</a>'
-      : '<span class="soc off" aria-disabled="true">'+inner+'</span>';
+  $('socials').innerHTML = S.socials.filter(function(s){ return s.url; }).map(function(s){
+    return '<a class="soc" href="'+s.url+'" target="_blank" rel="noopener" aria-label="'+s.label+'">'
+      + '<span class="ic">'+svg(s.id)+'</span><b>'+s.label+'</b></a>';
   }).join('');
 
   function nums(id, list){
