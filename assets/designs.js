@@ -305,12 +305,194 @@
     });
   }});
 
+  // 11) لافتة إعلانية عمودية 3 × 6 م (إعلان الافتتاح) — تُعرض 1500×3000 وتُطبع ضعفها
+  D.push({ id:'billboard', title:'لافتة 3 × 6 م — الكلاسيكية', size:'3 × 6 متر — نسخة طباعة 3000 × 6000', W:1500, H:3000, printScale:2, draw:function(ctx, W, H, A){
+    var B = window.BILLBOARD || {}, F = B.features || [], fr = 56;
+    ctx.fillStyle = C.brown; ctx.fillRect(0, 0, W, H);
+    // صورة باب اليمن في الأعلى تذوب في البنّي
+    cover(ctx, A.gate, 0, 0, W, 1250, .55); fade(ctx, 0, 520, W, 732, C.brown, 0);
+    frame(ctx, A, W, H, fr);
+    // شارة «قريبًا»
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 10;
+    ctx.fillStyle = C.gold; rr(ctx, (W - 760)/2, 130, 760, 170, 85); ctx.fill(); ctx.restore();
+    text(ctx, B.badge || 'قريبًا', W/2, 252, 108, { f:K, c:C.brown });
+    // الشعار على بطاقة فاتحة
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 50; ctx.shadowOffsetY = 18;
+    ctx.fillStyle = C.paper; rr(ctx, (W - 940)/2, 380, 940, 720, 60); ctx.fill(); ctx.restore();
+    img(ctx, A.logo, W/2, 420, 820);
+    // الشعار اللفظي والجملة التعريفية
+    text(ctx, B.slogan || S.tagline, W/2, 1290, 124, { f:K, c:C.gold });
+    text(ctx, B.intro || '', W/2, 1385, 50, { c:C.cream, w:700, max:W - 220 });
+    // المرافق: عمودان من بطاقات مرقّمة
+    var colW = 650, gap = 36, rowH = 122, top = 1460, rows = Math.ceil(F.length/2);
+    // حجم خطّ واحد لكل البنود: أكبر حجم يتّسع لأطولها
+    ctx.font = '800 50px Tajawal'; var fs = 50;
+    F.forEach(function(f){ fs = Math.min(fs, 50*(colW - 150)/ctx.measureText(f).width); });
+    // صفوف من بندين تُقرأ من اليمين، والبند الأخير الفرد في الوسط
+    F.forEach(function(f, i){
+      var row = Math.floor(i/2), y = top + row*rowH;
+      var x = (i === F.length - 1 && F.length % 2) ? (W - colW)/2 : (i % 2 ? (W - 2*colW - gap)/2 : (W + gap)/2);
+      ctx.fillStyle = C.cream; rr(ctx, x, y, colW, 100, 50); ctx.fill();
+      ctx.fillStyle = C.gold; ctx.beginPath(); ctx.arc(x + colW - 50, y + 50, 38, 0, Math.PI*2); ctx.fill();
+      text(ctx, String(i + 1), x + colW - 50, y + 67, 46, { w:800, ltr:true });
+      text(ctx, f, x + colW - 110, y + 50 + fs*0.36, fs, { a:'right', w:800 });
+    });
+    var half = rows;
+    // اللوحة السفلية: العنوان والأرقام والكود
+    var py = top + half*rowH + 30, ph = H - fr - 50 - py;
+    ctx.fillStyle = C.paper; rr(ctx, 100, py, W - 200, ph, 50); ctx.fill();
+    var qs = 400, qx = 150, qy = py + (ph - qs - 80)/2;
+    return qr(ctx, qx, qy, qs, { pad:14 }).then(function(){
+      text(ctx, 'امسح وتابعنا', qx + qs/2, qy + qs + 72, 46, { w:800 });
+      var rx = W - 150, y = py + 95;
+      icon(ctx, 'googlemaps', rx - 38, y - 20, 38, { ring:false, bg:C.gold, fg:C.brown });
+      text(ctx, B.city || '', rx - 96, y, 62, { a:'right', w:800, max:700 });
+      text(ctx, B.landmark || '', rx, y + 66, 40, { a:'right', c:C.muted, w:700, max:780 });
+      y += 170;
+      text(ctx, 'خدمة التوصيل', rx, y, 48, { a:'right', c:C.orange, w:800 });
+      (S.delivery || []).forEach(function(n, i){
+        icon(ctx, 'phone', rx - 32, y + 58 + i*82, 32, { ring:false });
+        text(ctx, local(n), rx - 84, y + 80 + i*82, 66, { a:'right', w:800, ltr:true });
+      });
+      y += 80 + 3*82 + 20;
+      text(ctx, 'الشكاوى والمقترحات: ' + (B.support || (S.support || []).map(local).join(' · ')), rx, y, 44, { a:'right', w:800, max:780 });
+    });
+  }});
+
+  /* ---------- مكوّنات مشتركة لنماذج اللافتة ---------- */
+  function bbFontSize(ctx, list, maxW, base){
+    ctx.font = '800 ' + base + 'px Tajawal'; var s = base;
+    list.forEach(function(f){ s = Math.min(s, base*maxW/ctx.measureText(f).width); });
+    return s;
+  }
+  // المرافق في عمودين يُقرآن من اليمين؛ البند الفرد الأخير في الوسط. style: list | glass | card
+  function bbFeatures(ctx, F, W, top, o){
+    var colW = o.colW || 640, gap = o.gap || 40, rowH = o.rowH || 112, h = o.h || 92;
+    var fs = bbFontSize(ctx, F, colW - (o.style === 'list' ? 90 : 140), o.base || 50);
+    F.forEach(function(f, i){
+      var y = top + Math.floor(i/2)*rowH;
+      var x = (i === F.length - 1 && F.length % 2) ? (W - colW)/2 : (i % 2 ? (W - 2*colW - gap)/2 : (W + gap)/2);
+      var tx;
+      if (o.style === 'list'){
+        ctx.save(); ctx.translate(x + colW - 24, y + h/2); ctx.rotate(Math.PI/4);
+        ctx.fillStyle = C.gold; ctx.fillRect(-15, -15, 30, 30); ctx.fillStyle = C.brown; ctx.fillRect(-6, -6, 12, 12); ctx.restore();
+        tx = x + colW - 70;
+        if (i < F.length - 2) dashed(ctx, x, y + h + (rowH - h)/2, x + colW, y + h + (rowH - h)/2, 'rgba(90,40,20,.25)', 3, [3, 10]);
+      } else if (o.style === 'glass'){
+        ctx.fillStyle = 'rgba(251,243,230,.13)'; rr(ctx, x, y, colW, h, h/2); ctx.fill();
+        ctx.strokeStyle = 'rgba(253,180,65,.75)'; ctx.lineWidth = 3; rr(ctx, x, y, colW, h, h/2); ctx.stroke();
+        ctx.fillStyle = C.gold; ctx.beginPath(); ctx.arc(x + colW - h/2, y + h/2, h/2 - 12, 0, Math.PI*2); ctx.fill();
+        text(ctx, String(i + 1), x + colW - h/2, y + h/2 + 16, 42, { w:800, ltr:true });
+        tx = x + colW - h - 14;
+      } else { // card
+        ctx.save(); ctx.shadowColor = 'rgba(90,40,20,.18)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = 6;
+        ctx.fillStyle = '#fff'; rr(ctx, x, y, colW, h, 22); ctx.fill(); ctx.restore();
+        ctx.fillStyle = C.brown; rr(ctx, x + colW - h, y, h, h, 22); ctx.fill(); ctx.fillRect(x + colW - h, y, 22, h);
+        text(ctx, String(i + 1), x + colW - h/2, y + h/2 + 17, 46, { w:800, ltr:true, c:C.gold });
+        tx = x + colW - h - 24;
+      }
+      text(ctx, f, tx, y + h/2 + fs*0.36, fs, { a:'right', w:800, c:o.color || C.brown });
+    });
+    return top + Math.ceil(F.length/2)*rowH;
+  }
+  // العنوان وأرقام التوصيل والشكاوى مع الكود. t: ألوان النموذج
+  function bbContact(ctx, x, y, w, h, t){
+    var B = window.BILLBOARD || {};
+    if (t.bg){ ctx.fillStyle = t.bg; rr(ctx, x, y, w, h, t.r == null ? 50 : t.r); ctx.fill(); }
+    var qs = Math.min(400, h - 150), qx = x + 50, qy = y + (h - qs - 80)/2;
+    if (t.qrBack){ ctx.fillStyle = t.qrBack; rr(ctx, qx - 26, qy - 26, qs + 52, qs + 130, 36); ctx.fill(); }
+    return qr(ctx, qx, qy, qs, { pad:14, frame:t.qrFrame }).then(function(){
+      text(ctx, 'امسح وتابعنا', qx + qs/2, qy + qs + 72, 46, { w:800, c:t.qrText || t.text });
+      var rx = x + w - 50, yy = y + (h - 560)/2 + 70, maxW = w - qs - 190;
+      icon(ctx, 'googlemaps', rx - 38, yy - 20, 38, { ring:false, bg:t.pinBg || C.gold, fg:t.pinFg || C.brown });
+      text(ctx, B.city || '', rx - 96, yy, 60, { a:'right', w:800, c:t.text, max:maxW - 100 });
+      text(ctx, B.landmark || '', rx, yy + 64, 40, { a:'right', w:700, c:t.muted, max:maxW });
+      text(ctx, 'خدمة التوصيل', rx, yy + 166, 48, { a:'right', w:800, c:t.accent });
+      (S.delivery || []).forEach(function(n, i){
+        icon(ctx, 'phone', rx - 32, yy + 224 + i*82, 32, { ring:false, bg:t.phoneBg || C.brown, fg:t.phoneFg || C.cream });
+        text(ctx, local(n), rx - 84, yy + 246 + i*82, 66, { a:'right', w:800, ltr:true, c:t.text });
+      });
+      text(ctx, 'الشكاوى والمقترحات: ' + (B.support || (S.support || []).map(local).join(' · ')), rx, yy + 520, 44, { a:'right', w:800, c:t.text, max:maxW });
+    });
+  }
+
+  // 12) لافتة — نموذج القوس والقمرية (خلفية كريمية)
+  D.push({ id:'billboard-arch', title:'لافتة 3 × 6 م — القوس والقمرية', size:'3 × 6 متر — نسخة طباعة 3000 × 6000', W:1500, H:3000, printScale:2, draw:function(ctx, W, H, A){
+    var B = window.BILLBOARD || {}, fr = 56;
+    ctx.fillStyle = C.cream; ctx.fillRect(0, 0, W, H);
+    frame(ctx, A, W, H, fr);
+    var ax = 190, aw = W - 380, ay = 140, ah = 1170;
+    ctx.fillStyle = C.gold; arch(ctx, ax - 18, ay - 18, aw + 36, ah + 36); ctx.fill();
+    ctx.fillStyle = C.brown; arch(ctx, ax, ay, aw, ah); ctx.fill();
+    ctx.save(); arch(ctx, ax, ay, aw, ah); ctx.clip(); ctx.globalAlpha = .28; cover(ctx, A.gate, ax, ay, aw, ah, .7); ctx.restore();
+    qamariya(ctx, W/2, ay + aw/2, aw/2 - 70);
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 14;
+    ctx.fillStyle = C.paper; rr(ctx, (W - 800)/2, ay + aw/2 + 30, 800, 600, 48); ctx.fill(); ctx.restore();
+    img(ctx, A.logo, W/2, ay + aw/2 + 60, 700);
+    text(ctx, B.badge || 'قريبًا', W/2, 1470, 136, { f:K, c:C.brown });
+    text(ctx, B.slogan || S.tagline, W/2, 1572, 82, { f:K, c:C.orange });
+    text(ctx, B.intro || '', W/2, 1642, 44, { c:C.muted, w:700, max:W - 240 });
+    var end = bbFeatures(ctx, B.features || [], W, 1690, { style:'list', colW:620, gap:70, rowH:90, h:76, base:50 });
+    var py = end + 30;
+    ctx.fillStyle = C.brown; ctx.fillRect(fr, py, W - 2*fr, H - fr - py); band(ctx, A, fr, py, W - 2*fr, 26);
+    return bbContact(ctx, fr + 20, py + 40, W - 2*fr - 40, H - fr - py - 50, { text:C.cream, muted:'#E9D6BE', accent:C.gold, phoneBg:C.gold, phoneFg:C.brown, qrBack:C.cream, qrText:C.brown });
+  }});
+
+  // 13) لافتة — نموذج الصورة الليلية (صورة باب اليمن كاملة)
+  D.push({ id:'billboard-photo', title:'لافتة 3 × 6 م — صورة باب اليمن', size:'3 × 6 متر — نسخة طباعة 3000 × 6000', W:1500, H:3000, printScale:2, draw:function(ctx, W, H, A){
+    var B = window.BILLBOARD || {};
+    ctx.fillStyle = C.dark; ctx.fillRect(0, 0, W, H);
+    cover(ctx, A.gate, 0, 0, W, 2300, .6);
+    var g = ctx.createLinearGradient(0, 0, 0, 2300);
+    g.addColorStop(0, 'rgba(62,26,11,.55)'); g.addColorStop(.45, 'rgba(62,26,11,.35)'); g.addColorStop(.75, 'rgba(62,26,11,.85)'); g.addColorStop(1, C.dark);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, 2302);
+    band(ctx, A, 0, 0, W, 50);
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 30;
+    text(ctx, 'قريبًا', W/2, 380, 290, { f:K, c:C.gold });
+    text(ctx, 'بينكم', W/2, 520, 120, { f:K, c:C.cream }); ctx.restore();
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 50; ctx.shadowOffsetY = 16;
+    ctx.fillStyle = C.paper; rr(ctx, (W - 860)/2, 600, 860, 640, 56); ctx.fill(); ctx.restore();
+    img(ctx, A.logo, W/2, 630, 760);
+    text(ctx, B.slogan || S.tagline, W/2, 1370, 104, { f:K, c:C.gold });
+    text(ctx, B.intro || '', W/2, 1450, 46, { c:C.cream, w:700, max:W - 200 });
+    var end = bbFeatures(ctx, B.features || [], W, 1520, { style:'glass', colW:650, gap:36, rowH:112, h:94, base:48, color:C.cream });
+    var py = end + 30;
+    ctx.fillStyle = C.gold; ctx.fillRect(0, py, W, H - py); band(ctx, A, 0, H - 50, W, 50);
+    return bbContact(ctx, 60, py + 30, W - 120, H - 50 - py - 50, { text:C.brown, muted:C.dark, accent:C.dark, pinBg:C.brown, pinFg:C.gold, qrFrame:C.brown, qrText:C.brown });
+  }});
+
+  // 14) لافتة — نموذج الفاصل المائل (بنّي أعلى وكريمي أسفل بشريط نقش مائل)
+  D.push({ id:'billboard-split', title:'لافتة 3 × 6 م — الفاصل المائل', size:'3 × 6 متر — نسخة طباعة 3000 × 6000', W:1500, H:3000, printScale:2, draw:function(ctx, W, H, A){
+    var B = window.BILLBOARD || {}, y1 = 1330, y2 = 1530;
+    ctx.fillStyle = C.cream; ctx.fillRect(0, 0, W, H);
+    ctx.save(); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(W, 0); ctx.lineTo(W, y1); ctx.lineTo(0, y2); ctx.closePath(); ctx.clip();
+    ctx.fillStyle = C.brown; ctx.fillRect(0, 0, W, y2);
+    ctx.globalAlpha = .35; cover(ctx, A.gate, 0, 0, W, y2, .65); ctx.globalAlpha = 1;
+    fade(ctx, 0, 0, W, 500, C.brown, .9); ctx.restore();
+    ctx.save(); ctx.translate(0, y2); ctx.rotate(Math.atan2(y1 - y2, W));
+    ctx.fillStyle = C.gold; ctx.fillRect(-40, -44, W + 200, 88); band(ctx, A, -40, -34, W + 200, 68); ctx.restore();
+    ctx.fillStyle = C.gold; rr(ctx, (W - 700)/2, 120, 700, 150, 75); ctx.fill();
+    text(ctx, B.badge || 'قريبًا', W/2, 228, 100, { f:K, c:C.brown });
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.4)'; ctx.shadowBlur = 44; ctx.shadowOffsetY = 14;
+    ctx.fillStyle = C.paper; rr(ctx, (W - 860)/2, 340, 860, 640, 56); ctx.fill(); ctx.restore();
+    img(ctx, A.logo, W/2, 370, 760);
+    text(ctx, B.slogan || S.tagline, W/2, 1140, 110, { f:K, c:C.gold });
+    text(ctx, B.intro || '', W/2, 1628, 46, { c:C.brown, w:700, max:W - 200 });
+    var end = bbFeatures(ctx, B.features || [], W, 1680, { style:'card', colW:650, gap:36, rowH:98, h:82, base:48 });
+    var py = end + 26;
+    return bbContact(ctx, 70, py, W - 140, H - 60 - py, { bg:C.brown, text:C.cream, muted:'#E9D6BE', accent:C.gold, phoneBg:C.gold, phoneFg:C.brown, qrBack:C.cream, qrText:C.brown }).then(function(){
+      band(ctx, A, 0, H - 40, W, 40);
+    });
+  }});
+
   window.BAB_DESIGNS = {
     list: D,
-    render: function(d, canvas){
+    // scale > 1 يرسم نسخة أعلى دقّة للطباعة الكبيرة بالتصميم نفسه
+    render: function(d, canvas, scale){
       return ready.then(function(A){
-        canvas.width = d.W; canvas.height = d.H;
-        var ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, d.W, d.H);
+        var s = scale || 1;
+        canvas.width = d.W*s; canvas.height = d.H*s;
+        var ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, d.W*s, d.H*s); ctx.setTransform(s, 0, 0, s, 0, 0);
         return Promise.resolve(d.draw(ctx, d.W, d.H, A)).then(function(){ return canvas; });
       });
     }

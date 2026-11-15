@@ -64,7 +64,7 @@
   <img src="assets/logo.png" alt="مطاعم باب اليمن">
   <div>
     <h1>تصاميم المطبوعات</h1>
-    <p>عشرة تصاميم جاهزة للطباعة، وكلها تحمل كود QR يفتح صفحة المطعم مع أيقونات حساباته.</p>
+    <p>تصاميم جاهزة للطباعة، وكلها تحمل كود QR يفتح صفحة المطعم مع أيقونات حساباته.</p>
   </div>
   <nav><a href="qr.html">مصمّم الكود</a><a href="./">الصفحة الرئيسية</a></nav>
 </header>
@@ -88,24 +88,31 @@
   var B = window.BAB_DESIGNS, grid = document.getElementById('grid'), zoom = document.getElementById('zoom'), big = document.getElementById('big'), cur = null;
   function download(c, name){ return window.saveCanvas(c, name); }
   function file(d){ return 'bab-alyemen-' + d.id + '.png'; }
+  // التصاميم الكبيرة (اللافتة) تُحفظ بدقّة الطباعة؛ الجوال يحدّ مساحة الرسم فتُخفَّض النسبة عليه
+  var touch = window.matchMedia && matchMedia('(hover:none) and (pointer:coarse)').matches;
+  function saveDesign(d, c){
+    if (!d.printScale) return download(c, file(d));
+    var s = touch ? Math.min(d.printScale, 1.33) : d.printScale, x = document.createElement('canvas');
+    return B.render(d, x, s).then(function(){ return download(x, file(d)); });
+  }
 
   // تُرسم التصاميم بالتتابع حتى لا تتزاحم على المتصفّح
   B.list.reduce(function(p, d, i){
     var card = document.createElement('article'); card.className = 'card'; card.id = d.id;
     card.innerHTML = '<div class="thumb" role="button" tabindex="0" aria-label="تكبير"><canvas></canvas></div>' +
-      '<div class="meta"><b><span class="num">' + (i + 1) + '</span></b><small></small><button class="btn" type="button">حفظ الصورة</button></div>';
+      '<div class="meta"><b><span class="num">' + (i + 1) + '</span></b><small></small><button class="btn" type="button">' + (d.printScale ? 'حفظ نسخة الطباعة' : 'حفظ الصورة') + '</button></div>';
     card.querySelector('b').appendChild(document.createTextNode(d.title));
     card.querySelector('small').textContent = d.size;
     grid.appendChild(card);
     var c = card.querySelector('canvas');
-    card.querySelector('.btn').onclick = function(){ download(c, file(d)); };
+    card.querySelector('.btn').onclick = function(){ saveDesign(d, c); };
     var open = function(){ cur = d; big.width = c.width; big.height = c.height; big.getContext('2d').drawImage(c, 0, 0); zoom.hidden = false; };
     card.querySelector('.thumb').onclick = open;
     card.querySelector('.thumb').onkeydown = function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); } };
     return p.then(function(){ return B.render(d, c); });
   }, Promise.resolve()).then(function(){ document.body.setAttribute('data-ready', '1'); });
 
-  document.getElementById('zdl').onclick = function(){ if (cur) download(big, file(cur)); };
+  document.getElementById('zdl').onclick = function(){ if (cur) saveDesign(cur, big); };
   document.getElementById('zclose').onclick = function(){ zoom.hidden = true; };
   zoom.onclick = function(e){ if (e.target === zoom) zoom.hidden = true; };
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape') zoom.hidden = true; });
